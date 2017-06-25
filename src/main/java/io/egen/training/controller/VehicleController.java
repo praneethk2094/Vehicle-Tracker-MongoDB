@@ -35,4 +35,6 @@ public class VehicleController {
     public void deleteVehicle(@RequestBody Vehicle vehicle){
         vehicleService.deleteVehicle(vehicle);
     }
+
+
 }

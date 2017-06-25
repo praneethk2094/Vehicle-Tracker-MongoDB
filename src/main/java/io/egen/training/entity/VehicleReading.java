@@ -1,5 +1,6 @@
 package io.egen.training.entity;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.geo.Point;
 
 import lombok.Data;
@@ -13,7 +14,8 @@ import java.util.Date;
 @Data
 @Document
 public class VehicleReading {
-    private Vehicle vehicle;
+    @Id
+    private String vin;
     private Point location;
     private Date timeStamp;
     private double fuelVolume;

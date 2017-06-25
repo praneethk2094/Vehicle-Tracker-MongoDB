@@ -18,11 +18,17 @@ public class VehicleServiceImpl implements VehicleService {
     VehicleReadingRepository vehicleReadingRepository;
 
     public Vehicle save(Vehicle vehicle){
+        if(vehicle==null){
+            //error
+        }
         Vehicle vehicle1 = vehicleRepository.save(vehicle);
         return vehicle1;
     }
 
     public List<Vehicle> saveVehicles(List<Vehicle> vehicleList) {
+        if(vehicleList.isEmpty()){
+            //error
+        }
         List<Vehicle> vehicleList1 = vehicleRepository.save(vehicleList);
         return vehicleList1;
     }
@@ -34,35 +40,46 @@ public class VehicleServiceImpl implements VehicleService {
 
     public Vehicle findOneVehicle(String vin) {
         Vehicle vehicle = vehicleRepository.findOne(vin);
+        if(vehicle == null){
+            //error
+        }
         return vehicle;
     }
 
-    public Vehicle updateVehicle(Vehicle vehicle) {
-        Vehicle vehicle1 = vehicleRepository.save(vehicle);
-        return vehicle1;
-    }
-
     public void deleteVehicle(Vehicle vehicle) {
+        if(vehicle == null){
+            //error
+        }
         vehicleRepository.delete(vehicle);
     }
 
+    /*
+    * Vehicle Readings service implementation
+    * */
     public List<VehicleReading> saveReadings(List<VehicleReading> vehicleReadingList) {
-        return null;
+        if(vehicleReadingList.isEmpty()){
+            // throw error
+        }
+        List<VehicleReading> vehicleReadingList1 = vehicleReadingRepository.save(vehicleReadingList);
+        return vehicleReadingList1;
     }
 
     public List<VehicleReading> findAllReadings() {
-        return null;
+        return vehicleReadingRepository.findAll();
     }
 
     public VehicleReading findOneReading(String vin) {
-        return null;
-    }
-
-    public VehicleReading updateVehicleReading(VehicleReading vehicleReading) {
-        return null;
+        VehicleReading vehicleReading = vehicleReadingRepository.findOne(vin);
+        if(vehicleReading==null){
+            //error
+        }
+        return vehicleReading;
     }
 
     public void deleteVehicleReading(VehicleReading vehicleReading) {
-
+        if(findOneReading(vehicleReading.getVin())==null){
+            //error
+        }
+        vehicleReadingRepository.delete(vehicleReading);
     }
 }
