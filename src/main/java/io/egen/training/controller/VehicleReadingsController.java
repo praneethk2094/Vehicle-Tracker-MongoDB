@@ -25,7 +25,8 @@ public class VehicleReadingsController {
         vehicleService.saveReadings(vehicleReadingList);}
 
     @RequestMapping(method = RequestMethod.POST, value = "/readings", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void updateVehicleReadings(@RequestBody List<VehicleReading> vehicleReadingList){vehicleService.saveReadings(vehicleReadingList);}
+    public void updateVehicleReadings(@RequestBody List<VehicleReading> vehicleReadingList){
+        vehicleService.saveReadings(vehicleReadingList);}
 
     @RequestMapping(method = RequestMethod.GET, value = "/readings/find", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public @ResponseBody List<VehicleReading> findAllVehicleReadings(){ return vehicleService.findAllReadings(); }

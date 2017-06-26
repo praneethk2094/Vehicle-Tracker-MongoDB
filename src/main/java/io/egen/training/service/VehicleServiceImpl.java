@@ -1,7 +1,9 @@
 package io.egen.training.service;
 
+import io.egen.training.entity.Alerts;
 import io.egen.training.entity.Vehicle;
 import io.egen.training.entity.VehicleReading;
+import io.egen.training.repository.AlertsRepository;
 import io.egen.training.repository.VehicleReadingRepository;
 import io.egen.training.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,8 @@ public class VehicleServiceImpl implements VehicleService {
     VehicleRepository vehicleRepository;
     @Autowired
     VehicleReadingRepository vehicleReadingRepository;
+    @Autowired
+    AlertsRepository alertsRepository;
 
     public Vehicle save(Vehicle vehicle){
         if(vehicle==null){
@@ -57,11 +61,28 @@ public class VehicleServiceImpl implements VehicleService {
     * Vehicle Readings service implementation
     * */
     public List<VehicleReading> saveReadings(List<VehicleReading> vehicleReadingList) {
+        for (VehicleReading vehicleReading:
+             vehicleReadingList) {
+            Vehicle vehicle = vehicleRepository.findOne(vehicleReading.getVin());
+            createAlerts(vehicle, vehicleReading);
+        }
         if(vehicleReadingList.isEmpty()){
             // throw error
         }
         List<VehicleReading> vehicleReadingList1 = vehicleReadingRepository.save(vehicleReadingList);
         return vehicleReadingList1;
+    }
+
+    private void createAlerts(Vehicle vehicle, VehicleReading vehicleReading) {
+        Alerts alerts = new Alerts();
+        if(vehicleReading.getEngineRpm() >= vehicle.getRedLineRpm()){
+            alerts.setVin(vehicle.getVin());
+            alerts.setFuelVolumeAlert(Alerts.Alert.HIGH);
+        }
+        if(vehicleReading.getFuelVolume() < (vehicle.getMaxFuelVolume() % 10)){
+            alerts.setVin(vehicle.getVin());
+            alerts.setFuelVolumeAlert(Alerts.Alert.MEDIUM);
+        }
     }
 
     public List<VehicleReading> findAllReadings() {
