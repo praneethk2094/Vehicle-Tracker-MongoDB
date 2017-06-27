@@ -2,6 +2,7 @@ package io.egen.training.entity;
 
 import org.springframework.data.annotation.Id;
 import lombok.Data;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -11,8 +12,7 @@ import java.sql.Timestamp;
 @Data
 @Document
 public class VehicleReading {
-    @Id
-    @Field("vin")
+    @Indexed
     private String vin;
     private double longitude;
     private double latitude;

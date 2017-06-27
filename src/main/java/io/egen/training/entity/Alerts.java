@@ -2,6 +2,7 @@ package io.egen.training.entity;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -13,9 +14,7 @@ public class Alerts {
     public enum Alert{
         HIGH, MEDIUM, LOW
     }
-
-    @Id
-    @Field("vin")
+    @Indexed
     private String vin;
     private Timestamp timestamp;
     private Alert engineRpmAlert;

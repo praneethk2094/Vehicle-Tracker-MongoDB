@@ -8,6 +8,7 @@ import io.egen.training.repository.VehicleReadingRepository;
 import io.egen.training.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,11 +17,8 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Autowired
     VehicleRepository vehicleRepository;
-    @Autowired
-    VehicleReadingRepository vehicleReadingRepository;
-    @Autowired
-    AlertsRepository alertsRepository;
 
+    @Transactional
     public Vehicle save(Vehicle vehicle){
         if(vehicle==null){
             //error
@@ -29,6 +27,7 @@ public class VehicleServiceImpl implements VehicleService {
         return vehicle1;
     }
 
+    @Transactional
     public List<Vehicle> saveVehicles(List<Vehicle> vehicleList) {
         if(vehicleList.isEmpty()){
             //error
@@ -37,11 +36,13 @@ public class VehicleServiceImpl implements VehicleService {
         return vehicleList1;
     }
 
+    @Transactional
     public List<Vehicle> findAllVehicles() {
         List<Vehicle> vehicleList1 = vehicleRepository.findAll();
         return vehicleList1;
     }
 
+    @Transactional
     public Vehicle findOneVehicle(String vin) {
         Vehicle vehicle = vehicleRepository.findOne(vin);
         if(vehicle == null){
@@ -50,57 +51,11 @@ public class VehicleServiceImpl implements VehicleService {
         return vehicle;
     }
 
+    @Transactional
     public void deleteVehicle(Vehicle vehicle) {
         if(vehicle == null){
             //error
         }
         vehicleRepository.delete(vehicle);
-    }
-
-    /*
-    * Vehicle Readings service implementation
-    * */
-    public List<VehicleReading> saveReadings(List<VehicleReading> vehicleReadingList) {
-        for (VehicleReading vehicleReading:
-             vehicleReadingList) {
-            Vehicle vehicle = vehicleRepository.findOne(vehicleReading.getVin());
-            createAlerts(vehicle, vehicleReading);
-        }
-        if(vehicleReadingList.isEmpty()){
-            // throw error
-        }
-        List<VehicleReading> vehicleReadingList1 = vehicleReadingRepository.save(vehicleReadingList);
-        return vehicleReadingList1;
-    }
-
-    private void createAlerts(Vehicle vehicle, VehicleReading vehicleReading) {
-        Alerts alerts = new Alerts();
-        if(vehicleReading.getEngineRpm() >= vehicle.getRedLineRpm()){
-            alerts.setVin(vehicle.getVin());
-            alerts.setFuelVolumeAlert(Alerts.Alert.HIGH);
-        }
-        if(vehicleReading.getFuelVolume() < (vehicle.getMaxFuelVolume() % 10)){
-            alerts.setVin(vehicle.getVin());
-            alerts.setFuelVolumeAlert(Alerts.Alert.MEDIUM);
-        }
-    }
-
-    public List<VehicleReading> findAllReadings() {
-        return vehicleReadingRepository.findAll();
-    }
-
-    public VehicleReading findOneReading(String vin) {
-        VehicleReading vehicleReading = vehicleReadingRepository.findOne(vin);
-        if(vehicleReading==null){
-            //error
-        }
-        return vehicleReading;
-    }
-
-    public void deleteVehicleReading(VehicleReading vehicleReading) {
-        if(findOneReading(vehicleReading.getVin())==null){
-            //error
-        }
-        vehicleReadingRepository.delete(vehicleReading);
     }
 }

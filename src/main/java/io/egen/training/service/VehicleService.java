@@ -12,9 +12,4 @@ public interface VehicleService {
     List<Vehicle> findAllVehicles();
     Vehicle findOneVehicle(String vin);
     void deleteVehicle(Vehicle vehicle);
-
-    List<VehicleReading> saveReadings(List<VehicleReading> vehicleReadingList);
-    List<VehicleReading> findAllReadings();
-    VehicleReading findOneReading(String vin);
-    void deleteVehicleReading(VehicleReading vehicleReading);
 }

@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/*Hello*/
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/api/vehicles")
+@RequestMapping(value = "/vehicles")
 public class VehicleController {
 
     @Autowired
