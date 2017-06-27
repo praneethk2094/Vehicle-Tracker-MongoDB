@@ -1,10 +1,8 @@
 package io.egen.training.service;
 
-import io.egen.training.entity.Alerts;
+import io.egen.training.ExceptionHandling.BadRequest;
+import io.egen.training.ExceptionHandling.ResourceNotFound;
 import io.egen.training.entity.Vehicle;
-import io.egen.training.entity.VehicleReading;
-import io.egen.training.repository.AlertsRepository;
-import io.egen.training.repository.VehicleReadingRepository;
 import io.egen.training.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,8 +18,8 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Transactional
     public Vehicle save(Vehicle vehicle){
-        if(vehicle==null){
-            //error
+        if(vehicle.getVin() == null){
+            throw new BadRequest("Vehicle VIN cannot be null");
         }
         Vehicle vehicle1 = vehicleRepository.save(vehicle);
         return vehicle1;
@@ -29,8 +27,8 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Transactional
     public List<Vehicle> saveVehicles(List<Vehicle> vehicleList) {
-        if(vehicleList.isEmpty()){
-            //error
+        if(vehicleList.stream().filter(v -> (v.getVin()==null)).count() > 0){
+            throw new BadRequest("Vehicles must contain VIN");
         }
         List<Vehicle> vehicleList1 = vehicleRepository.save(vehicleList);
         return vehicleList1;
@@ -46,7 +44,7 @@ public class VehicleServiceImpl implements VehicleService {
     public Vehicle findOneVehicle(String vin) {
         Vehicle vehicle = vehicleRepository.findOne(vin);
         if(vehicle == null){
-            //error
+            throw new ResourceNotFound("Vehicle cannot be found");
         }
         return vehicle;
     }
@@ -54,7 +52,7 @@ public class VehicleServiceImpl implements VehicleService {
     @Transactional
     public void deleteVehicle(Vehicle vehicle) {
         if(vehicle == null){
-            //error
+            throw new BadRequest("No such vehicle found to delete");
         }
         vehicleRepository.delete(vehicle);
     }

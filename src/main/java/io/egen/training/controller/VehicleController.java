@@ -17,8 +17,15 @@ public class VehicleController {
     @Autowired
     VehicleService vehicleService;
 
-    @RequestMapping(method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+   /* @RequestMapping(method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public void updateVehicles(@RequestBody List<Vehicle> vehicleList){vehicleService.saveVehicles(vehicleList);}
+*/
+    @RequestMapping(method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public void updateVehicles(@RequestBody Vehicle vehicle){
+       // List<Vehicle> vehicleList = new ArrayList<>();
+       // Vehicle vehicleList = vehicleService.save(vehicle);
+        vehicleService.save(vehicle);
+    }
 
     @RequestMapping(method = RequestMethod.GET, value = "/find", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public @ResponseBody List<Vehicle> findAllVehicles(){

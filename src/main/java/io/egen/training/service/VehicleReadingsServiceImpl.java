@@ -1,5 +1,7 @@
 package io.egen.training.service;
 
+import io.egen.training.ExceptionHandling.BadRequest;
+import io.egen.training.ExceptionHandling.ResourceNotFound;
 import io.egen.training.entity.Alerts;
 import io.egen.training.entity.Vehicle;
 import io.egen.training.entity.VehicleReading;
@@ -33,8 +35,8 @@ public class VehicleReadingsServiceImpl implements VehicleReadingsService {
             Vehicle vehicle = vehicleRepository.findOne(vehicleReading.getVin());
             createAlerts(vehicle, vehicleReading);
         }
-        if(vehicleReadingList.isEmpty()){
-            // throw error
+        if(vehicleReadingList.stream().filter(v -> (v.getVin()==null)).count() > 0){
+            throw new BadRequest("Vehicle readings must contain VIN");
         }
         List<VehicleReading> vehicleReadingList1 = vehicleReadingRepository.insert(vehicleReadingList);
         return vehicleReadingList1;
@@ -48,16 +50,16 @@ public class VehicleReadingsServiceImpl implements VehicleReadingsService {
     @Transactional
     public List<VehicleReading> findOneVehicleReadings(String vin) {
         List<VehicleReading> vehicleReading = vehicleReadingRepository.findAllByVin(vin);
-        if(vehicleReading==null){
-            //error
+        if(vehicleReading == null){
+            throw new ResourceNotFound("Vehicle readings with "+vin+" vin doesn't exist");
         }
         return vehicleReading;
     }
 
     @Transactional
     public void deleteVehicleReading(VehicleReading vehicleReading) {
-        if(findOneVehicleReadings(vehicleReading.getVin())==null){
-            //error
+        if(findOneVehicleReadings(vehicleReading.getVin())== null){
+            throw new BadRequest("No such vehicle reading found to delete");
         }
         vehicleReadingRepository.delete(vehicleReading);
     }

@@ -2,6 +2,8 @@ package io.egen.training.service;
 
 import io.egen.training.entity.Vehicle;
 import io.egen.training.entity.VehicleReading;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
