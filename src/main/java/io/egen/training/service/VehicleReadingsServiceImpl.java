@@ -18,78 +18,77 @@ import org.springframework.transaction.annotation.Transactional;
 *log4j
 * */
 import java.util.List;
+/*
+* VehicleReadingsServiceImpl implements from VehicleReadingsService
+* */
 @Service
 public class VehicleReadingsServiceImpl implements VehicleReadingsService {
 
     @Autowired
-    VehicleRepository vehicleRepository;
+    private VehicleRepository vehicleRepository;
     @Autowired
-    VehicleReadingRepository vehicleReadingRepository;
+    private VehicleReadingRepository vehicleReadingRepository;
     @Autowired
-    AlertsRepository alertsRepository;
-
+    private AlertsService alertsService;
+    /*
+    * takes a list of vehicleReadings
+    * throws bad request if any reading doesn't have VIN
+    * creates alerts
+    * saves the readings to database
+    * */
     @Transactional
-    public List<VehicleReading> saveReadings(List<VehicleReading> vehicleReadingList) {
-        for (VehicleReading vehicleReading:
-                vehicleReadingList) {
-            Vehicle vehicle = vehicleRepository.findOne(vehicleReading.getVin());
-            createAlerts(vehicle, vehicleReading);
-        }
-        if(vehicleReadingList.stream().filter(v -> (v.getVin()==null)).count() > 0){
+    public List<VehicleReading> saveReadings(final List<VehicleReading> vehicleReadingList) {
+        if (vehicleReadingList.stream().filter(v -> (v.getVin() == null)).count() > 0) {
             throw new BadRequest("Vehicle readings must contain VIN");
         }
-        List<VehicleReading> vehicleReadingList1 = vehicleReadingRepository.insert(vehicleReadingList);
-        return vehicleReadingList1;
+        for (VehicleReading vehicleReading :
+                vehicleReadingList) {
+            final Vehicle vehicle = vehicleRepository.findOne(vehicleReading.getVin());
+            alertsService.createAlerts(vehicle, vehicleReading);
+        }
+        return vehicleReadingRepository.insert(vehicleReadingList);
     }
-
+    /*
+    * returns all vehicle readings in database
+    * */
     @Transactional
     public List<VehicleReading> findAllReadings() {
         return vehicleReadingRepository.findAll();
     }
-
+    /*
+    * takes VIN
+    * if readings exist for given vin returns reading
+    * else throws BadRequest exception
+    * */
     @Transactional
-    public List<VehicleReading> findOneVehicleReadings(String vin) {
-        List<VehicleReading> vehicleReading = vehicleReadingRepository.findAllByVin(vin);
+    public List<VehicleReading> findOneVehicleReadings(final String vin) {
+        final List<VehicleReading> vehicleReading = vehicleReadingRepository.findAllByVin(vin);
         if(vehicleReading == null){
             throw new ResourceNotFound("Vehicle readings with "+vin+" vin doesn't exist");
         }
         return vehicleReading;
     }
-
+    /*
+    * takes VIN
+    * if readings exist for given vin deletes all readings associated with the VIN
+    * else throws BadRequest exception
+    * */
     @Transactional
-    public void deleteVehicleReading(VehicleReading vehicleReading) {
-        if(findOneVehicleReadings(vehicleReading.getVin())== null){
+    public void deleteVehicleReadings(final String vin) {
+        if(vehicleReadingRepository.findAllByVin(vin).isEmpty()){
+            throw new BadRequest("No such vehicle reading found to delete");
+        }
+        vehicleReadingRepository.deleteAllByVin(vin);
+    }
+    /*
+    * takes VehicleReading
+    * if reading exist for given reading deletes reading
+    * else throws BadRequest exception
+    * */
+    public void deleteOneVehicleReading(final VehicleReading vehicleReading){
+        if(!vehicleReadingRepository.findAllByVin(vehicleReading.getVin()).contains(vehicleReading)){
             throw new BadRequest("No such vehicle reading found to delete");
         }
         vehicleReadingRepository.delete(vehicleReading);
     }
-
-
-    @Transactional
-    private void createAlerts(Vehicle vehicle, VehicleReading vehicleReading) {
-        Alerts alerts = new Alerts();
-        List<Byte> tires = vehicleReading.getTires().getTirePressures();
-        if(vehicleReading.getEngineRpm() >= vehicle.getRedLineRpm()){
-            alerts.setVin(vehicle.getVin());
-            alerts.setEngineRpmAlert(Alerts.Alert.HIGH);
-        }
-        if(vehicleReading.getFuelVolume() < (vehicle.getMaxFuelVolume() % 10)){
-            alerts.setVin(vehicle.getVin());
-            alerts.setFuelVolumeAlert(Alerts.Alert.MEDIUM);
-        }
-        if(tires.stream().filter(i->(i>36 || i<32)).count() > 0){
-            alerts.setVin(vehicle.getVin());
-            alerts.setTirePressureAlert(Alerts.Alert.LOW);
-        }
-        if(vehicleReading.isCheckEngineLightOn()){
-            alerts.setVin(vehicle.getVin());
-            alerts.setCheckEngineLightOnAlert(Alerts.Alert.LOW);
-        }
-        if(vehicleReading.isEngineCoolantLow()){
-            alerts.setVin(vehicle.getVin());
-            alerts.setEngineCoolantAlert(Alerts.Alert.LOW);
-        }
-        alertsRepository.save(alerts);
-    }
-
 }

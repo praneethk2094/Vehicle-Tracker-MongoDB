@@ -5,41 +5,63 @@ import io.egen.training.service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
-/*Hello*/
+/*
+*VehicleController is a rest controller which maps requests to the request mapping provided and delegates
+*work to VehicleService service layer
+*
+* updateVehicles method adds list of vehicle to database
+* updateVehicle methods adds one vehicle to database
+* findAllVehicles return list of all vehicles
+* findVehicle returns vehicle requested
+* deleteVehicle deletes the vehicle in database with given vin
+* */
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/vehicles")
 public class VehicleController {
 
     @Autowired
-    VehicleService vehicleService;
+    private VehicleService vehicleService;
 
-   /* @RequestMapping(method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void updateVehicles(@RequestBody List<Vehicle> vehicleList){vehicleService.saveVehicles(vehicleList);}
-*/
-    @RequestMapping(method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void updateVehicles(@RequestBody Vehicle vehicle){
-       // List<Vehicle> vehicleList = new ArrayList<>();
-       // Vehicle vehicleList = vehicleService.save(vehicle);
-        vehicleService.save(vehicle);
+    /*
+    * PUTs JSON vehicle in database
+    * */
+    @RequestMapping(method = RequestMethod.PUT, value = "/vehicle")
+    public void updateVehicle(@RequestBody Vehicle vehicle){
+        List<Vehicle> vehicleList = new ArrayList<>();
+        vehicleList.add(vehicle);
+        vehicleService.saveVehicles(vehicleList);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/find", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public @ResponseBody List<Vehicle> findAllVehicles(){
+    /*
+    * PUT List of vehicles in JSON to database
+    * */
+    @RequestMapping(method = RequestMethod.PUT, value = "/vehicles")
+    public void updateVehicles(@RequestBody List<Vehicle> vehicleList){vehicleService.saveVehicles(vehicleList);}
+
+    /*
+    * GETs all vehicles in database
+    * */
+    @RequestMapping(method = RequestMethod.GET, value = "/find")
+    public List<Vehicle> findAllVehicles(){
         return vehicleService.findAllVehicles();
     }
 
+    /*
+    * GETs one vehicle by taking vin as path variable
+    * */
     @RequestMapping(method = RequestMethod.GET, value = "/find/{vin}")
     public Vehicle findVehicle(@PathVariable("vin") String vin){
         return vehicleService.findOneVehicle(vin);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "/delete")
-    public void deleteVehicle(@RequestBody Vehicle vehicle){
-        vehicleService.deleteVehicle(vehicle);
+    /*
+    * DELETEs vehicle using vin as path variable
+    * */
+    @RequestMapping(method = RequestMethod.DELETE, value = "/delete/{vin}")
+    public void deleteVehicle(@PathVariable("vin") String vin){
+        vehicleService.deleteVehicle(vin);
     }
 
 }

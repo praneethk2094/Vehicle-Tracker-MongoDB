@@ -3,6 +3,8 @@ package io.egen.training.service;
 import io.egen.training.ExceptionHandling.BadRequest;
 import io.egen.training.ExceptionHandling.ResourceNotFound;
 import io.egen.training.entity.Vehicle;
+import io.egen.training.repository.AlertsRepository;
+import io.egen.training.repository.VehicleReadingRepository;
 import io.egen.training.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,32 +16,34 @@ import java.util.List;
 public class VehicleServiceImpl implements VehicleService {
 
     @Autowired
-    VehicleRepository vehicleRepository;
-
-    @Transactional
-    public Vehicle save(Vehicle vehicle){
-        if(vehicle.getVin() == null){
-            throw new BadRequest("Vehicle VIN cannot be null");
-        }
-        Vehicle vehicle1 = vehicleRepository.save(vehicle);
-        return vehicle1;
-    }
-
+    private VehicleRepository vehicleRepository;
+    @Autowired
+    private VehicleReadingRepository vehicleReadingRepository;
+    @Autowired
+    private AlertsRepository alertsRepository;
+    /*
+    * takes list of vehicles
+    * if any vehicle VIN is null throws BadRequest
+    * else saves vehicle list
+    * */
     @Transactional
     public List<Vehicle> saveVehicles(List<Vehicle> vehicleList) {
-        if(vehicleList.stream().filter(v -> (v.getVin()==null)).count() > 0){
+        if(vehicleList.stream().filter(v -> (v.getVin()== null)).count() > 0){
             throw new BadRequest("Vehicles must contain VIN");
         }
-        List<Vehicle> vehicleList1 = vehicleRepository.save(vehicleList);
-        return vehicleList1;
+        return vehicleRepository.save(vehicleList);
     }
-
+    /*
+    * find all vehicle in database
+    * */
     @Transactional
     public List<Vehicle> findAllVehicles() {
-        List<Vehicle> vehicleList1 = vehicleRepository.findAll();
-        return vehicleList1;
+        return vehicleRepository.findAll();
     }
-
+    /*
+    * finds vehicle with VIN
+    * if no such vehicle has that VIN throws ResourceNotFound exception
+    * */
     @Transactional
     public Vehicle findOneVehicle(String vin) {
         Vehicle vehicle = vehicleRepository.findOne(vin);
@@ -48,12 +52,19 @@ public class VehicleServiceImpl implements VehicleService {
         }
         return vehicle;
     }
-
+    /*
+    * deletes vehicle by VIN
+    * if no such vehicle has that VIN throws BadRequest exception
+    * deletes all readings corresponding to that VIN
+    * */
     @Transactional
-    public void deleteVehicle(Vehicle vehicle) {
+    public void deleteVehicle(String vin) {
+        Vehicle vehicle = vehicleRepository.findOne(vin);
         if(vehicle == null){
-            throw new BadRequest("No such vehicle found to delete");
+            throw new BadRequest("No such vehicle vin found to delete");
         }
         vehicleRepository.delete(vehicle);
+        vehicleReadingRepository.deleteAllByVin(vin);
+        alertsRepository.deleteAllByVin(vin);
     }
 }

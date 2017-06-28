@@ -1,15 +1,14 @@
 package io.egen.training.entity;
 
 import java.util.Date;
-import java.util.List;
-
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-
+/*
+* Vehicle class POJO
+* Uses Lombok to generate GETTERS and SETTERS
+* */
 @Data
 @Document
 public class Vehicle {
