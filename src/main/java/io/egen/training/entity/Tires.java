@@ -3,14 +3,17 @@ package io.egen.training.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.data.annotation.Transient;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /*
 * Tires class POJO
 * Uses Lombok to generate GETTERS and SETTERS
 * */
 @Data
-public class Tires{
+public class Tires {
     private byte frontLeft;
     private byte frontRight;
     private byte rearLeft;
@@ -22,7 +25,6 @@ public class Tires{
     @Transient
     @JsonIgnore
     public List<Byte> getTirePressures() {
-        List<Byte> tirePressure = new ArrayList<>(Arrays.asList(frontLeft, frontRight, rearLeft, rearRight));
-        return tirePressure;
+        return new ArrayList<>(Arrays.asList(frontLeft, frontRight, rearLeft, rearRight));
     }
 }

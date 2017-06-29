@@ -2,22 +2,23 @@ package io.egen.training.service;
 
 import io.egen.training.ExceptionHandling.BadRequest;
 import io.egen.training.ExceptionHandling.ResourceNotFound;
-import io.egen.training.entity.Alerts;
 import io.egen.training.entity.Vehicle;
 import io.egen.training.entity.VehicleReading;
-import io.egen.training.repository.AlertsRepository;
 import io.egen.training.repository.VehicleReadingRepository;
 import io.egen.training.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
 /*
 *
 *
 * @transactional
 *log4j
 * */
-import java.util.List;
+
 /*
 * VehicleReadingsServiceImpl implements from VehicleReadingsService
 * */
@@ -30,6 +31,7 @@ public class VehicleReadingsServiceImpl implements VehicleReadingsService {
     private VehicleReadingRepository vehicleReadingRepository;
     @Autowired
     private AlertsService alertsService;
+
     /*
     * takes a list of vehicleReadings
     * throws bad request if any reading doesn't have VIN
@@ -37,17 +39,20 @@ public class VehicleReadingsServiceImpl implements VehicleReadingsService {
     * saves the readings to database
     * */
     @Transactional
-    public List<VehicleReading> saveReadings(final List<VehicleReading> vehicleReadingList) {
+    public void saveReadings(final List<VehicleReading> vehicleReadingList) {
         if (vehicleReadingList.stream().filter(v -> (v.getVin() == null)).count() > 0) {
             throw new BadRequest("Vehicle readings must contain VIN");
         }
         for (VehicleReading vehicleReading :
                 vehicleReadingList) {
             final Vehicle vehicle = vehicleRepository.findOne(vehicleReading.getVin());
+            if(vehicle.getVin() == null)
+                throw new BadRequest("No associated vehicle found for given VIN: "+vehicleReading.getVin());
             alertsService.createAlerts(vehicle, vehicleReading);
         }
-        return vehicleReadingRepository.insert(vehicleReadingList);
+        vehicleReadingRepository.insert(vehicleReadingList);
     }
+
     /*
     * returns all vehicle readings in database
     * */
@@ -55,6 +60,7 @@ public class VehicleReadingsServiceImpl implements VehicleReadingsService {
     public List<VehicleReading> findAllReadings() {
         return vehicleReadingRepository.findAll();
     }
+
     /*
     * takes VIN
     * if readings exist for given vin returns reading
@@ -63,11 +69,12 @@ public class VehicleReadingsServiceImpl implements VehicleReadingsService {
     @Transactional
     public List<VehicleReading> findOneVehicleReadings(final String vin) {
         final List<VehicleReading> vehicleReading = vehicleReadingRepository.findAllByVin(vin);
-        if(vehicleReading == null){
-            throw new ResourceNotFound("Vehicle readings with "+vin+" vin doesn't exist");
+        if (vehicleReading == null) {
+            throw new ResourceNotFound("Vehicle readings with " + vin + " vin doesn't exist");
         }
         return vehicleReading;
     }
+
     /*
     * takes VIN
     * if readings exist for given vin deletes all readings associated with the VIN
@@ -75,20 +82,32 @@ public class VehicleReadingsServiceImpl implements VehicleReadingsService {
     * */
     @Transactional
     public void deleteVehicleReadings(final String vin) {
-        if(vehicleReadingRepository.findAllByVin(vin).isEmpty()){
+        if (vehicleReadingRepository.findAllByVin(vin).isEmpty()) {
             throw new BadRequest("No such vehicle reading found to delete");
         }
         vehicleReadingRepository.deleteAllByVin(vin);
+        List<VehicleReading> vehicleReadingList = vehicleReadingRepository.findAllByVin(vin);
+        vehicleReadingList.forEach(v -> alertsService
+                .deleteAllAlertsByVehicleReadingId(v.getVehicleReadingId()));
     }
+
     /*
     * takes VehicleReading
     * if reading exist for given reading deletes reading
     * else throws BadRequest exception
     * */
-    public void deleteOneVehicleReading(final VehicleReading vehicleReading){
-        if(!vehicleReadingRepository.findAllByVin(vehicleReading.getVin()).contains(vehicleReading)){
+    @Transactional
+    public void deleteOneVehicleReading(final VehicleReading vehicleReading) {
+        if (!vehicleReadingRepository.findAllByVin(vehicleReading.getVin()).contains(vehicleReading)) {
             throw new BadRequest("No such vehicle reading found to delete");
         }
+        alertsService.deleteAllAlertsByVehicleReadingId(vehicleReading.getVehicleReadingId());
         vehicleReadingRepository.delete(vehicleReading);
+    }
+
+    @Transactional
+    public void deleteAll(){
+        alertsService.deleteAll();
+        vehicleReadingRepository.deleteAll();
     }
 }

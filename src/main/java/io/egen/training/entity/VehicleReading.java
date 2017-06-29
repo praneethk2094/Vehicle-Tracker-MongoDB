@@ -1,9 +1,12 @@
 package io.egen.training.entity;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.Date;
+
 /*
 * VehicleReading class POJO
 * Uses Lombok to generate GETTERS and SETTERS
@@ -12,6 +15,8 @@ import java.util.Date;
 @Data
 @Document
 public class VehicleReading {
+    @Id
+    private String vehicleReadingId;
     @Indexed
     private String vin;
     private double longitude;

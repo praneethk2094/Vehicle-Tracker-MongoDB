@@ -10,6 +10,10 @@ import org.springframework.web.servlet.DispatcherServlet;
 
 @SpringBootApplication
 public class Application {
+    public static void main(String[] args) {
+        ApplicationContext context = SpringApplication.run(Application.class, args);
+    }
+
     @Bean
     public DispatcherServlet dispatcherServlet() {
         return new DispatcherServlet();
@@ -21,9 +25,5 @@ public class Application {
         ServletRegistrationBean registration = new ServletRegistrationBean(dispatcherServlet(), "/api/*");
         registration.setName(DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_REGISTRATION_BEAN_NAME);
         return registration;
-    }
-
-    public static void main(String [] args){
-        ApplicationContext context = SpringApplication.run(Application.class, args);
     }
 }

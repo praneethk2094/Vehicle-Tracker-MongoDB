@@ -8,7 +8,9 @@ import io.egen.training.repository.AlertsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
+
 /*
 * implements AlertsService and its methods
 * does business logic for Alerts
@@ -17,16 +19,26 @@ import java.util.List;
 public class AlertsServiceImpl implements AlertsService {
 
     @Autowired
-    AlertsRepository alertsRepository;
+    private AlertsRepository alertsRepository;
 
     @Transactional
-    public List<Alerts> findAll(){
+    public List<Alerts> findAll() {
         return alertsRepository.findAll();
     }
 
     @Transactional
-    public List<Alerts> findAllByVin(String vin){
+    public List<Alerts> findAllByVin(String vin) {
         return alertsRepository.findAllByVin(vin);
+    }
+
+    @Transactional
+    public void deleteAllAlertsByVehicleReadingId(String vrId){
+
+        alertsRepository.delete(vrId);
+    }
+    @Transactional
+    public void deleteAll(){
+        alertsRepository.deleteAll();
     }
     /*
     * takes vehicle and vehicle reading
@@ -35,30 +47,34 @@ public class AlertsServiceImpl implements AlertsService {
     * stores in database
     * */
     @Transactional
-    public void createAlerts(final Vehicle vehicle, final VehicleReading vehicleReading) {
+    public Alerts createAlerts(final Vehicle vehicle, final VehicleReading vehicleReading) {
         Alerts alerts = new Alerts();
         final List<Byte> tires = vehicleReading.getTires().getTirePressures();
-        if(vehicleReading.getEngineRpm() >= vehicle.getRedLineRpm()){
+        if (vehicleReading.getEngineRpm() >= vehicle.getRedlineRpm()) {
             alerts.setVin(vehicle.getVin());
             alerts.setEngineRpmAlert(Alerts.Alert.HIGH);
         }
-        if(vehicleReading.getFuelVolume() < (vehicle.getMaxFuelVolume() % 10)){
+        if (vehicleReading.getFuelVolume() < (vehicle.getMaxFuelVolume() % 10)) {
             alerts.setVin(vehicle.getVin());
             alerts.setFuelVolumeAlert(Alerts.Alert.MEDIUM);
         }
-        if(tires.stream().filter(i->(i>36 || i<32)).count() > 0){
+        if (tires.stream().filter(i -> (i > 36 || i < 32)).count() > 0) {
             alerts.setVin(vehicle.getVin());
             alerts.setTirePressureAlert(Alerts.Alert.LOW);
         }
-        if(vehicleReading.isCheckEngineLightOn()){
+        if (vehicleReading.isCheckEngineLightOn()) {
             alerts.setVin(vehicle.getVin());
             alerts.setCheckEngineLightOnAlert(Alerts.Alert.LOW);
         }
-        if(vehicleReading.isEngineCoolantLow()){
+        if (vehicleReading.isEngineCoolantLow()) {
             alerts.setVin(vehicle.getVin());
             alerts.setEngineCoolantAlert(Alerts.Alert.LOW);
         }
-        alertsRepository.save(alerts);
+        if(alerts.getVin()!=null){
+            alerts.setAlertId(vehicleReading.getVehicleReadingId());
+            return alertsRepository.save(alerts);
+        }
+        return null;
     }
 
 }

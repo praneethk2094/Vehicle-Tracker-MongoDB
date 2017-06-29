@@ -21,18 +21,20 @@ public class VehicleServiceImpl implements VehicleService {
     private VehicleReadingRepository vehicleReadingRepository;
     @Autowired
     private AlertsRepository alertsRepository;
+
     /*
     * takes list of vehicles
     * if any vehicle VIN is null throws BadRequest
     * else saves vehicle list
     * */
     @Transactional
-    public List<Vehicle> saveVehicles(List<Vehicle> vehicleList) {
-        if(vehicleList.stream().filter(v -> (v.getVin()== null)).count() > 0){
+    public void saveVehicles(List<Vehicle> vehicleList) {
+        if (vehicleList.stream().filter(v -> (v.getVin() == null)).count() > 0) {
             throw new BadRequest("Vehicles must contain VIN");
         }
-        return vehicleRepository.save(vehicleList);
+        vehicleRepository.save(vehicleList);
     }
+
     /*
     * find all vehicle in database
     * */
@@ -40,6 +42,7 @@ public class VehicleServiceImpl implements VehicleService {
     public List<Vehicle> findAllVehicles() {
         return vehicleRepository.findAll();
     }
+
     /*
     * finds vehicle with VIN
     * if no such vehicle has that VIN throws ResourceNotFound exception
@@ -47,11 +50,12 @@ public class VehicleServiceImpl implements VehicleService {
     @Transactional
     public Vehicle findOneVehicle(String vin) {
         Vehicle vehicle = vehicleRepository.findOne(vin);
-        if(vehicle == null){
+        if (vehicle == null) {
             throw new ResourceNotFound("Vehicle cannot be found");
         }
         return vehicle;
     }
+
     /*
     * deletes vehicle by VIN
     * if no such vehicle has that VIN throws BadRequest exception
@@ -60,11 +64,20 @@ public class VehicleServiceImpl implements VehicleService {
     @Transactional
     public void deleteVehicle(String vin) {
         Vehicle vehicle = vehicleRepository.findOne(vin);
-        if(vehicle == null){
+        if (vehicle == null) {
             throw new BadRequest("No such vehicle vin found to delete");
         }
         vehicleRepository.delete(vehicle);
         vehicleReadingRepository.deleteAllByVin(vin);
         alertsRepository.deleteAllByVin(vin);
+    }
+    /*
+    * deletes all vehicle, readings and alerts corresponding to that VIN
+    * */
+    @Transactional
+    public void deleteAll(){
+        vehicleRepository.deleteAll();
+        vehicleReadingRepository.deleteAll();
+        alertsRepository.deleteAll();
     }
 }

@@ -11,7 +11,12 @@ import java.util.List;
 * AlertsService interface providing createAlerts method to implement
 * */
 public interface AlertsService {
-    void createAlerts(Vehicle vehicle, VehicleReading vehicleReading);
+    Alerts createAlerts(Vehicle vehicle, VehicleReading vehicleReading);
+
     List<Alerts> findAll();
+
     List<Alerts> findAllByVin(String vin);
+
+    void deleteAllAlertsByVehicleReadingId(String vrid);
+    void deleteAll();
 }
