@@ -1,10 +1,10 @@
 package io.egen.training.controller;
 
+import io.egen.training.aspect.BoundaryLogger;
 import io.egen.training.entity.Alerts;
 import io.egen.training.service.AlertsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 /*
@@ -14,6 +14,7 @@ import java.util.List;
 * */
 @CrossOrigin
 @RestController
+@RequestMapping(value = "/alerts")
 public class AlertsController {
 
     private AlertsService alertsService;
@@ -21,11 +22,11 @@ public class AlertsController {
     public AlertsController(AlertsService alertsService){
         this.alertsService = alertsService;
     }
-
     /*
-    * return list of all alerts in database
-    * */
-    @RequestMapping(method = RequestMethod.GET, value = "/alerts")
+        * return list of all alerts in database
+        * */
+    @BoundaryLogger
+    @RequestMapping(method = RequestMethod.GET)
     public List<Alerts> findAll() {
         return alertsService.findAll();
     }
@@ -34,7 +35,8 @@ public class AlertsController {
     * takes path variable VIN
     * returns list of alerts associated to that VIN
     * */
-    @RequestMapping(method = RequestMethod.GET, value = "/alerts/{vin}")
+    @BoundaryLogger
+    @RequestMapping(method = RequestMethod.GET, value = "/{vin}")
     public List<Alerts> findAlertsByVin(@PathVariable("vin") String vin) {
         return alertsService.findAllByVin(vin);
     }

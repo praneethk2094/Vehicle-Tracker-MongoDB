@@ -18,8 +18,11 @@ import java.util.List;
 @Service
 public class AlertsServiceImpl implements AlertsService {
 
-    @Autowired
     private AlertsRepository alertsRepository;
+    @Autowired
+    public AlertsServiceImpl(AlertsRepository alertsRepository) {
+        this.alertsRepository = alertsRepository;
+    }
 
     @Transactional
     public List<Alerts> findAll() {
@@ -28,7 +31,7 @@ public class AlertsServiceImpl implements AlertsService {
 
     @Transactional
     public List<Alerts> findAllByVin(String vin) {
-        return alertsRepository.findAllByVin(vin);
+        return alertsRepository.findAll();
     }
 
     @Transactional
@@ -72,7 +75,7 @@ public class AlertsServiceImpl implements AlertsService {
         }
         if(alerts.getVin()!=null){
             alerts.setAlertId(vehicleReading.getVehicleReadingId());
-            return alertsRepository.save(alerts);
+            return alertsRepository.insert(alerts);
         }
         return null;
     }

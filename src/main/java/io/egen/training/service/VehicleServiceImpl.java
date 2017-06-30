@@ -1,7 +1,8 @@
 package io.egen.training.service;
 
-import io.egen.training.ExceptionHandling.BadRequest;
-import io.egen.training.ExceptionHandling.ResourceNotFound;
+import io.egen.training.aspect.BoundaryLogger;
+import io.egen.training.exceptionHandling.BadRequest;
+import io.egen.training.exceptionHandling.ResourceNotFound;
 import io.egen.training.entity.Vehicle;
 import io.egen.training.repository.AlertsRepository;
 import io.egen.training.repository.VehicleReadingRepository;
@@ -14,31 +15,36 @@ import java.util.List;
 
 @Service
 public class VehicleServiceImpl implements VehicleService {
-
-    @Autowired
+    
     private VehicleRepository vehicleRepository;
-    @Autowired
     private VehicleReadingRepository vehicleReadingRepository;
-    @Autowired
     private AlertsRepository alertsRepository;
 
+    @Autowired
+    public VehicleServiceImpl(VehicleRepository vehicleRepository, VehicleReadingRepository vehicleReadingRepository, AlertsRepository alertsRepository) {
+        this.vehicleRepository = vehicleRepository;
+        this.vehicleReadingRepository = vehicleReadingRepository;
+        this.alertsRepository = alertsRepository;
+    }
+
     /*
-    * takes list of vehicles
-    * if any vehicle VIN is null throws BadRequest
-    * else saves vehicle list
-    * */
+        * takes list of vehicles
+        * if any vehicle VIN is null throws BadRequest
+        * else saves vehicle list
+        * */
     @Transactional
-    public void saveVehicles(List<Vehicle> vehicleList) {
+    public List<Vehicle> saveVehicles(List<Vehicle> vehicleList) {
         if (vehicleList.stream().filter(v -> (v.getVin() == null)).count() > 0) {
             throw new BadRequest("Vehicles must contain VIN");
         }
-        vehicleRepository.save(vehicleList);
+        return vehicleRepository.save(vehicleList);
     }
 
     /*
     * find all vehicle in database
     * */
     @Transactional
+    @BoundaryLogger
     public List<Vehicle> findAllVehicles() {
         return vehicleRepository.findAll();
     }
@@ -48,6 +54,7 @@ public class VehicleServiceImpl implements VehicleService {
     * if no such vehicle has that VIN throws ResourceNotFound exception
     * */
     @Transactional
+    @BoundaryLogger
     public Vehicle findOneVehicle(String vin) {
         Vehicle vehicle = vehicleRepository.findOne(vin);
         if (vehicle == null) {

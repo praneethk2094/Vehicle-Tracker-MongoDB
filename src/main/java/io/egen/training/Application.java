@@ -7,7 +7,9 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.DispatcherServlet;
-
+/*
+* Spring Boot application's main method creates context and registers front controller
+* */
 @SpringBootApplication
 public class Application {
     public static void main(String[] args) {

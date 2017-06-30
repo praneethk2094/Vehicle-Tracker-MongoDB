@@ -9,7 +9,7 @@ import java.util.List;
 * */
 public interface VehicleService {
 
-    void saveVehicles(List<Vehicle> vehicleList);
+    List<Vehicle> saveVehicles(List<Vehicle> vehicleList);
 
     List<Vehicle> findAllVehicles();
 
