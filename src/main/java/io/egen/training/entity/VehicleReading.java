@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
+
 /*
 * VehicleReading class POJO
 * Uses Lombok to generate GETTERS and SETTERS

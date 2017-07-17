@@ -15,5 +15,6 @@ import java.util.List;
 @Repository
 public interface VehicleReadingRepository extends MongoRepository<VehicleReading, String> {
     List<VehicleReading> findAllByVin(String vin);
+
     void deleteAllByVin(String vin);
 }

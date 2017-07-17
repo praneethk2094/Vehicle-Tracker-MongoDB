@@ -1,4 +1,4 @@
-package io.egen.training.controller;
+package controller;
 
 import io.egen.training.Application;
 import io.egen.training.entity.Vehicle;
@@ -25,7 +25,9 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import static org.junit.Assert.assertNotNull;
+
 /*
 * Unit testing Vehicle Controller class with Mockito
 * */
@@ -71,27 +73,29 @@ public class VehicleControllerTest {
         List<Vehicle> vehicleListTest = new ArrayList<>();
         vehicleListTest.add(vehicle);
         vehicleService.saveVehicles(vehicleListTest);
-        }
+    }
 
 
     @Test
     public void testSuccess() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/find"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/vehicles/find"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].vin", Matchers.is("testVin")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].make", Matchers.is("testMake")));
     }
+
     @Test
     public void testFail() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/find"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/vehicles/find"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(contentType))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].vin", Matchers.is("test")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].make", Matchers.is("test")));
     }
+
     @After
-    public void refil(){
+    public void refil() {
         vehicleService.deleteAll();
         vehicleService.saveVehicles(vehicles);
     }

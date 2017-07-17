@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 public class VehicleServiceImpl implements VehicleService {
-    
+
     private VehicleRepository vehicleRepository;
     private VehicleReadingRepository vehicleReadingRepository;
     private AlertsRepository alertsRepository;
@@ -78,11 +78,12 @@ public class VehicleServiceImpl implements VehicleService {
         vehicleReadingRepository.deleteAllByVin(vin);
         alertsRepository.deleteAllByVin(vin);
     }
+
     /*
     * deletes all vehicle, readings and alerts corresponding to that VIN
     * */
     @Transactional
-    public void deleteAll(){
+    public void deleteAll() {
         vehicleRepository.deleteAll();
         vehicleReadingRepository.deleteAll();
         alertsRepository.deleteAll();

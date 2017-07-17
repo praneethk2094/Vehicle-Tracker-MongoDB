@@ -5,6 +5,7 @@ import io.egen.training.entity.VehicleReading;
 import io.egen.training.service.VehicleReadingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -22,10 +23,12 @@ import java.util.List;
 public class VehicleReadingsController {
 
     private VehicleReadingsService vehicleReadingsService;
+
     @Autowired
     public VehicleReadingsController(VehicleReadingsService vehicleReadingsService) {
         this.vehicleReadingsService = vehicleReadingsService;
     }
+
     /*
         * mapped to /reading this method takes vehicleReading in request body by POST and JSON
         * and adds it to database
@@ -35,6 +38,7 @@ public class VehicleReadingsController {
     public void updateVehicleReading(@RequestBody VehicleReading vehicleReading) {
         vehicleReadingsService.saveReadings(Collections.singletonList(vehicleReading));
     }
+
     /*
     * mapped to /readings this method takes List of vehicleReading in request body by POST and JSON
     * and adds it to database
@@ -44,6 +48,7 @@ public class VehicleReadingsController {
     public void updateVehicleReadings(@RequestBody List<VehicleReading> vehicleReadingList) {
         vehicleReadingsService.saveReadings(vehicleReadingList);
     }
+
     /*
     * mapped to GET /readings/find this method returns list of all vehicleReading in JSON
     * */
@@ -61,6 +66,7 @@ public class VehicleReadingsController {
     public List<VehicleReading> findVehicleReading(@PathVariable("vin") String vin) {
         return vehicleReadingsService.findOneVehicleReadings(vin);
     }
+
     /*
     * DELETEs all readings of vehicle corresponding to vin
     * */
@@ -69,6 +75,7 @@ public class VehicleReadingsController {
     public void deleteVehicleReadings(@PathVariable String vin) {
         vehicleReadingsService.deleteVehicleReadings(vin);
     }
+
     /*
     * DELETEs one vehicle reading by taking vehicle reading in request body
     * */
@@ -76,11 +83,5 @@ public class VehicleReadingsController {
     @RequestMapping(method = RequestMethod.DELETE, value = "/readings/delete")
     public void deleteOneVehicleReading(@RequestBody VehicleReading vehicleReading) {
         vehicleReadingsService.deleteOneVehicleReading(vehicleReading);
-    }
-
-    @BoundaryLogger
-    @RequestMapping(method = RequestMethod.DELETE, value = "/readings/deleteAll")
-    public void deleteAllVehicleReading() {
-        vehicleReadingsService.deleteAll();
     }
 }

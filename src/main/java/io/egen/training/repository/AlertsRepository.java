@@ -13,5 +13,6 @@ import java.util.List;
 @Repository
 public interface AlertsRepository extends MongoRepository<Alerts, String> {
     void deleteAllByVin(String vin);
+
     List<Alerts> findAllByVin(String vin);
 }

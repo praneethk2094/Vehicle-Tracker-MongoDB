@@ -19,6 +19,7 @@ import java.util.List;
 public class AlertsServiceImpl implements AlertsService {
 
     private AlertsRepository alertsRepository;
+
     @Autowired
     public AlertsServiceImpl(AlertsRepository alertsRepository) {
         this.alertsRepository = alertsRepository;
@@ -35,14 +36,16 @@ public class AlertsServiceImpl implements AlertsService {
     }
 
     @Transactional
-    public void deleteAllAlertsByVehicleReadingId(String vrId){
+    public void deleteAllAlertsByVehicleReadingId(String vrId) {
 
         alertsRepository.delete(vrId);
     }
+
     @Transactional
-    public void deleteAll(){
+    public void deleteAll() {
         alertsRepository.deleteAll();
     }
+
     /*
     * takes vehicle and vehicle reading
     * and checks for conditions
@@ -73,7 +76,7 @@ public class AlertsServiceImpl implements AlertsService {
             alerts.setVin(vehicle.getVin());
             alerts.setEngineCoolantAlert(Alerts.Alert.LOW);
         }
-        if(alerts.getVin()!=null){
+        if (alerts.getVin() != null) {
             alerts.setAlertId(vehicleReading.getVehicleReadingId());
             return alertsRepository.insert(alerts);
         }

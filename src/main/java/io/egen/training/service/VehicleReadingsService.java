@@ -9,9 +9,14 @@ import java.util.List;
 * */
 public interface VehicleReadingsService {
     List<VehicleReading> saveReadings(List<VehicleReading> vehicleReadingList);
+
     List<VehicleReading> findAllReadings();
+
     List<VehicleReading> findOneVehicleReadings(String vin);
+
     void deleteVehicleReadings(String vin);
+
     void deleteOneVehicleReading(VehicleReading vehicleReading);
+
     void deleteAll();
 }

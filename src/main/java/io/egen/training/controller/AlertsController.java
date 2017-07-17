@@ -5,6 +5,7 @@ import io.egen.training.entity.Alerts;
 import io.egen.training.service.AlertsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 /*
@@ -18,10 +19,12 @@ import java.util.List;
 public class AlertsController {
 
     private AlertsService alertsService;
+
     @Autowired
-    public AlertsController(AlertsService alertsService){
+    public AlertsController(AlertsService alertsService) {
         this.alertsService = alertsService;
     }
+
     /*
         * return list of all alerts in database
         * */

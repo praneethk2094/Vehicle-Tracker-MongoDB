@@ -5,6 +5,7 @@ import io.egen.training.entity.Vehicle;
 import io.egen.training.service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -24,10 +25,12 @@ import java.util.List;
 public class VehicleController {
 
     private VehicleService vehicleService;
+
     @Autowired
     public VehicleController(VehicleService vehicleService) {
         this.vehicleService = vehicleService;
     }
+
     /*
     * PUTs JSON vehicle in database
     * */
@@ -36,6 +39,7 @@ public class VehicleController {
     public void updateVehicle(@RequestBody Vehicle vehicle) {
         vehicleService.saveVehicles(Collections.singletonList(vehicle));
     }
+
     /*
     * PUT List of vehicles in JSON to database
     * */
@@ -44,6 +48,7 @@ public class VehicleController {
     public void updateVehicles(@RequestBody List<Vehicle> vehicleList) {
         vehicleService.saveVehicles(vehicleList);
     }
+
     /*
     * GETs all vehicles in database
     * */
@@ -52,6 +57,7 @@ public class VehicleController {
     public List<Vehicle> findAllVehicles() {
         return vehicleService.findAllVehicles();
     }
+
     /*
     * GETs one vehicle by taking vin as path variable
     * */
@@ -60,6 +66,7 @@ public class VehicleController {
     public Vehicle findOneVehicle(@PathVariable("vin") String vin) {
         return vehicleService.findOneVehicle(vin);
     }
+
     /*
     * DELETEs vehicle using vin as path variable
     * */
@@ -68,14 +75,4 @@ public class VehicleController {
     public void deleteVehicle(@PathVariable("vin") String vin) {
         vehicleService.deleteVehicle(vin);
     }
-
-    @BoundaryLogger
-    @RequestMapping(method = RequestMethod.DELETE, value = "/vehicles/delete")
-    public void deleteAllVehicle(@RequestBody Vehicle vehicle) {
-        vehicleService.deleteVehicle(vehicle.getVin());
-    }
-
-    @BoundaryLogger
-    @RequestMapping(method = RequestMethod.DELETE, value = "/vehicles/deleteAll")
-    public void deleteAll() { vehicleService.deleteAll(); }
 }

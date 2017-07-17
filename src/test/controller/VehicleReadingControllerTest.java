@@ -1,4 +1,4 @@
-package io.egen.training.controller;
+package controller;
 
 import io.egen.training.Application;
 import io.egen.training.entity.Tires;
@@ -28,27 +28,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 @WebAppConfiguration
 public class VehicleReadingControllerTest {
 
-    @Mock
-    Tires tires;
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(),
             Charset.forName("utf8"));
+
     private MockMvc mockMvc;
     private HttpMessageConverter mappingJackson2HttpMessageConverter;
     private VehicleReading vehicleReading;
     private List<VehicleReading> vehicleReadings = new ArrayList<>();
+    @Mock
+    private Tires tires;
     @Autowired
     private VehicleReadingsService vehicleReadingsService;
     @Autowired
@@ -89,6 +85,7 @@ public class VehicleReadingControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].vin", Matchers.is("testVin")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].checkEngineLightOn", Matchers.is(true)));
     }
+
     @Test
     public void testFail() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/find"))
@@ -97,8 +94,9 @@ public class VehicleReadingControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].vin", Matchers.is("test")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].checkEngineLightOn", Matchers.is(false)));
     }
+
     @After
-    public void refil(){
+    public void refil() {
         vehicleReadingsService.deleteAll();
         vehicleReadingsService.saveReadings(vehicleReadings);
     }
