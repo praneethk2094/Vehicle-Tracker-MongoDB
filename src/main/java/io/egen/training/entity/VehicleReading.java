@@ -1,23 +1,27 @@
 package io.egen.training.entity;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.geo.Point;
-
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
-/**
- * Created by diksh on 6/23/2017.
- */
+/*
+* VehicleReading class POJO
+* Uses Lombok to generate GETTERS and SETTERS
+* indexes vin field for better to make queries quick
+* */
 @Data
 @Document
 public class VehicleReading {
     @Id
+    private String vehicleReadingId;
+    @Indexed
     private String vin;
-    private Point location;
-    private Date timeStamp;
+    private double longitude;
+    private double latitude;
+    private Date timestamp;
     private double fuelVolume;
     private float speed;
     private short engineHp;
@@ -26,12 +30,4 @@ public class VehicleReading {
     private boolean cruiseControlOn;
     private short engineRpm;
     private Tires tires;
-}
-
-@Data
-class Tires{
-    private byte frontLeft;
-    private byte frontRight;
-    private byte rearLeft;
-    private byte rearRight;
 }
