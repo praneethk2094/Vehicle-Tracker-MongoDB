@@ -19,4 +19,7 @@ public interface AlertsService {
     void deleteAllAlertsByVehicleReadingId(String vrId);
 
     void deleteAll();
+
+
+
 }

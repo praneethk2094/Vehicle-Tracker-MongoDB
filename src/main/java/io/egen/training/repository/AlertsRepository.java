@@ -15,4 +15,12 @@ public interface AlertsRepository extends MongoRepository<Alerts, String> {
     void deleteAllByVin(String vin);
 
     List<Alerts> findAllByVin(String vin);
+
+    int countAlertsByVinAndEngineRpmAlertAndTimestampBetween(String vin, String high,Date currTime, Date givenTime);
+
+    int countAlertsByVinAndEngineRpmAlert(String vin,String high);
+
+    int countAlertsByVinAndFuelVolumeAlert(String vin,String medium);
+
+    int countAlertsByVinAndTirePresuureAlert(String vin,String low);
 }

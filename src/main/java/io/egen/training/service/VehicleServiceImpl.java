@@ -34,6 +34,8 @@ public class VehicleServiceImpl implements VehicleService {
         * */
     @Transactional
     public List<Vehicle> saveVehicles(List<Vehicle> vehicleList) {
+
+
         if (vehicleList.stream().filter(v -> (v.getVin() == null)).count() > 0) {
             throw new BadRequest("Vehicles must contain VIN");
         }
@@ -46,7 +48,26 @@ public class VehicleServiceImpl implements VehicleService {
     @Transactional
     @BoundaryLogger
     public List<Vehicle> findAllVehicles() {
-        return vehicleRepository.findAll();
+        String high = "HIGH";
+        String medium = "MEDIUM";
+        String low = "LOW";
+        Date start = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(start);
+        c.add(Calendar.HOUR,-2);
+        Date end = c.getTime();
+
+        List<Vehicle> vehicleList = vehicleRepository.findAll();
+
+        for(Vehicle vehicle: vehicleList){
+            vehicle.setCount(alertsRepository.countAlertsByVinAndEngineRpmAlertAndTimestampBetween(vehicle.getVin(),high,end,start));
+            vehicle.setHighAlert(alertsRepository.highCount(vehicle.getVin()));
+            vehicle.setMediumAlert(alertsRepository.mediumCount(vehicle.getVin()));
+            vehicle.setLowAlert(alertsRepository.lowCount(vehicle.getVin()));
+        }
+
+
+        return vehicleList();
     }
 
     /*
@@ -57,8 +78,18 @@ public class VehicleServiceImpl implements VehicleService {
     @BoundaryLogger
     public Vehicle findOneVehicle(String vin) {
         Vehicle vehicle = vehicleRepository.findOne(vin);
+        String high = "HIGH";
+        String medium = "MEDIUM";
+        String low = "LOW";
         if (vehicle == null) {
             throw new ResourceNotFound("Vehicle cannot be found");
+        }
+        else{
+
+            vehicle.setHighAlert(alertsRepository.highCount(vehicle.getVin()));
+            vehicle.setMediumAlert(alertsRepository.mediumCount(vehicle.getVin()));
+            vehicle.setLowAlert(alertsRepository.lowCount(vehicle.getVin()));
+
         }
         return vehicle;
     }

@@ -27,6 +27,15 @@ public class Vehicle {
     private float maxFuelVolume;
     private Date lastServiceDate;
     @Transient
+    private int twoHrAlert;
+    @Transient
+    private highAlert;
+    @Transient
+    private mediumAlert;
+    @Transient
+    private lowAlert;
+
+    @Transient
     @JsonIgnore
     private List<VehicleReading> vehicleReadingList;
     @Transient
