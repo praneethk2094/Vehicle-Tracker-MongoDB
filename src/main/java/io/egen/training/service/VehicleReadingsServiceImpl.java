@@ -10,7 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /*
 * VehicleReadingsServiceImpl implements from VehicleReadingsService
@@ -27,6 +35,36 @@ public class VehicleReadingsServiceImpl implements VehicleReadingsService {
         this.vehicleRepository = vehicleRepository;
         this.vehicleReadingRepository = vehicleReadingRepository;
         this.alertsService = alertsService;
+    }
+
+
+    public List<VehicleReading> getReadingsByTime(String Time, String Vin) {
+
+        if (Time != null) {
+            System.out.println("in if loop" + Time);
+            String[] split = Time.split("T");
+            String s = split[0] + " " + split[1];
+
+            Date date = null;
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            try {
+                date = simpleDateFormat.parse(s);
+            } catch (ParseException ex) {
+                System.out.println("Exception " + ex);
+            }
+
+            return vehicleReadingRepository.findAllByTimestampIsAfterAndVin(date, Vin);
+        } else {
+            Date start = new Date();
+            Calendar c = Calendar.getInstance();
+            c.setTime(start);
+            c.add(Calendar.MINUTE, -30);
+            Date end = c.getTime();
+            System.out.println("In method" + start + " " + end);
+            return vehicleReadingRepository.findAllByTimestampIsAfterAndVin(end, Vin);
+        }
+
+
     }
 
     /*

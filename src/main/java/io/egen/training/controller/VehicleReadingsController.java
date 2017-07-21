@@ -6,6 +6,7 @@ import io.egen.training.service.VehicleReadingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.websocket.server.PathParam;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,8 +19,8 @@ import java.util.List;
 * findVehicleReading returns vehicle reading requested by vin
 * deleteVehicleReading deletes the vehicle readings with vin given as path variable
 * */
-@RestController
 @CrossOrigin
+@RestController
 public class VehicleReadingsController {
 
     private VehicleReadingsService vehicleReadingsService;
@@ -27,6 +28,16 @@ public class VehicleReadingsController {
     @Autowired
     public VehicleReadingsController(VehicleReadingsService vehicleReadingsService) {
         this.vehicleReadingsService = vehicleReadingsService;
+    }
+
+    @BoundaryLogger
+    @RequestMapping(method = RequestMethod.GET, value = "/vreads/{vin}")
+    public List<VehicleReading> TimedVehicleReading(@PathVariable("vin") String vin, @PathParam("time") String time) {
+        String inputTime = null;
+        if (time != null) inputTime = time;
+        System.out.println("vin: " + vin);
+        System.out.println("Time: " + time);
+        return vehicleReadingsService.getReadingsByTime(inputTime, vin);
     }
 
     /*

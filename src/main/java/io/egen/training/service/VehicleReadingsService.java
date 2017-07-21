@@ -2,6 +2,7 @@ package io.egen.training.service;
 
 import io.egen.training.entity.VehicleReading;
 
+import java.util.Date;
 import java.util.List;
 
 /*
@@ -19,4 +20,6 @@ public interface VehicleReadingsService {
     void deleteOneVehicleReading(VehicleReading vehicleReading);
 
     void deleteAll();
+
+    List<VehicleReading> getReadingsByTime(String Time, String Vin);
 }

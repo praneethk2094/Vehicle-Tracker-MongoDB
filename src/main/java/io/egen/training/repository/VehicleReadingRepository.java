@@ -5,6 +5,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 /*
@@ -17,4 +18,6 @@ public interface VehicleReadingRepository extends MongoRepository<VehicleReading
     List<VehicleReading> findAllByVin(String vin);
 
     void deleteAllByVin(String vin);
+
+    List<VehicleReading> findAllByTimestampIsAfterAndVin(Date TimePeriod, String Vin);
 }
