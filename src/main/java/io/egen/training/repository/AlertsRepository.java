@@ -5,6 +5,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 /*
@@ -16,11 +17,11 @@ public interface AlertsRepository extends MongoRepository<Alerts, String> {
 
     List<Alerts> findAllByVin(String vin);
 
-    int countAlertsByVinAndEngineRpmAlertAndTimestampBetween(String vin, String high,Date currTime, Date givenTime);
-
     int countAlertsByVinAndEngineRpmAlert(String vin,String high);
 
     int countAlertsByVinAndFuelVolumeAlert(String vin,String medium);
 
     int countAlertsByVinAndTirePresuureAlert(String vin,String low);
+
+    int countAlertsByVinAndEngineRpmAlertAndTimestampBetween(String vin, String high, Date end, Date start);
 }

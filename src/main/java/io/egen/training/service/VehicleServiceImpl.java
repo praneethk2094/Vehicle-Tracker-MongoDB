@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -60,14 +62,14 @@ public class VehicleServiceImpl implements VehicleService {
         List<Vehicle> vehicleList = vehicleRepository.findAll();
 
         for(Vehicle vehicle: vehicleList){
-            vehicle.setCount(alertsRepository.countAlertsByVinAndEngineRpmAlertAndTimestampBetween(vehicle.getVin(),high,end,start));
-            vehicle.setHighAlert(alertsRepository.highCount(vehicle.getVin()));
-            vehicle.setMediumAlert(alertsRepository.mediumCount(vehicle.getVin()));
-            vehicle.setLowAlert(alertsRepository.lowCount(vehicle.getVin()));
+            vehicle.setTwoHrAlert(alertsRepository.countAlertsByVinAndEngineRpmAlertAndTimestampBetween(vehicle.getVin(),high,end,start));
+            vehicle.setHighAlert(alertsRepository.countAlertsByVinAndEngineRpmAlert(vehicle.getVin(),high));
+            vehicle.setMediumAlert(alertsRepository.countAlertsByVinAndFuelVolumeAlert(vehicle.getVin(),medium));
+            vehicle.setLowAlert(alertsRepository.countAlertsByVinAndTirePresuureAlert(vehicle.getVin(),low));
         }
 
 
-        return vehicleList();
+        return vehicleList;
     }
 
     /*
@@ -86,9 +88,9 @@ public class VehicleServiceImpl implements VehicleService {
         }
         else{
 
-            vehicle.setHighAlert(alertsRepository.highCount(vehicle.getVin()));
-            vehicle.setMediumAlert(alertsRepository.mediumCount(vehicle.getVin()));
-            vehicle.setLowAlert(alertsRepository.lowCount(vehicle.getVin()));
+            vehicle.setHighAlert(alertsRepository.countAlertsByVinAndEngineRpmAlert(vehicle.getVin(),high));
+            vehicle.setMediumAlert(alertsRepository.countAlertsByVinAndFuelVolumeAlert(vehicle.getVin(),medium));
+            vehicle.setLowAlert(alertsRepository.countAlertsByVinAndTirePresuureAlert(vehicle.getVin(),low));
 
         }
         return vehicle;

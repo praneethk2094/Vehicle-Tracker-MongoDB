@@ -29,11 +29,11 @@ public class Vehicle {
     @Transient
     private int twoHrAlert;
     @Transient
-    private highAlert;
+    private int highAlert;
     @Transient
-    private mediumAlert;
+    private int mediumAlert;
     @Transient
-    private lowAlert;
+    private int lowAlert;
 
     @Transient
     @JsonIgnore
