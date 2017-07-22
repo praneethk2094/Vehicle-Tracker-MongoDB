@@ -65,7 +65,7 @@ public class VehicleServiceImpl implements VehicleService {
             vehicle.setTwoHrAlert(alertsRepository.countAlertsByVinAndEngineRpmAlertAndTimestampBetween(vehicle.getVin(),high,end,start));
             vehicle.setHighAlert(alertsRepository.countAlertsByVinAndEngineRpmAlert(vehicle.getVin(),high));
             vehicle.setMediumAlert(alertsRepository.countAlertsByVinAndFuelVolumeAlert(vehicle.getVin(),medium));
-            vehicle.setLowAlert(alertsRepository.countAlertsByVinAndTirePresuureAlert(vehicle.getVin(),low));
+            vehicle.setLowAlert(alertsRepository.countAlertsByVinAndTirePressureAlert(vehicle.getVin(),low));
         }
 
 
@@ -90,7 +90,7 @@ public class VehicleServiceImpl implements VehicleService {
 
             vehicle.setHighAlert(alertsRepository.countAlertsByVinAndEngineRpmAlert(vehicle.getVin(),high));
             vehicle.setMediumAlert(alertsRepository.countAlertsByVinAndFuelVolumeAlert(vehicle.getVin(),medium));
-            vehicle.setLowAlert(alertsRepository.countAlertsByVinAndTirePresuureAlert(vehicle.getVin(),low));
+            vehicle.setLowAlert(alertsRepository.countAlertsByVinAndTirePressureAlert(vehicle.getVin(),low));
 
         }
         return vehicle;

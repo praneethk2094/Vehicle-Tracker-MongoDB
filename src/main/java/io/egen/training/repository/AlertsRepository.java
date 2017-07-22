@@ -21,7 +21,7 @@ public interface AlertsRepository extends MongoRepository<Alerts, String> {
 
     int countAlertsByVinAndFuelVolumeAlert(String vin,String medium);
 
-    int countAlertsByVinAndTirePresuureAlert(String vin,String low);
+    int countAlertsByVinAndTirePressureAlert(String vin,String low);
 
     int countAlertsByVinAndEngineRpmAlertAndTimestampBetween(String vin, String high, Date end, Date start);
 }
